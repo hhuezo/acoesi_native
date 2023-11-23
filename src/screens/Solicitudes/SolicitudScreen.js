@@ -1,15 +1,7 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  RefreshControl,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
+import {  View,  Text,  ScrollView,  RefreshControl,  ActivityIndicator,  TouchableOpacity,} from "react-native";
 import React, { useState, useEffect } from "react";
 import { Card, SearchBar, FAB } from "react-native-elements";
 import { API_HOST } from "../../utils/constants";
-
 import { styles } from "./solicitudStyles";
 
 export function SolicitudScreen(props) {

@@ -1,23 +1,24 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-} from "react-native";
+import {  View,  Text,  TouchableOpacity,  TextInput,  ScrollView,} from "react-native";
 import React, { useState, useEffect } from "react";
 import { styles } from "./AddSolicitudStyles";
+import { dropStyles } from "./AddSolicitudStyles";
 import { API_HOST } from "../../utils/constants";
+import { Dropdown } from "react-native-element-dropdown";
 
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+
+
 export function AddSolicitudScreen(props) {
   const [data, setData] = useState(null);
-  const [dataFiador, setDataFiador] = useState(null);
   const [selectedSolicitante, setSelectedSolicitante] = useState(null);
-  const [selectedTipo, setSelectedTipo] = useState(null);
   const [selectedFiador, setSelectedFiador] = useState(null);
+  const [selectedTipo, setSelectedTipo] = useState(null);
+ 
+
+  const [solicitantes, setSolicitantes] = useState([]);
+  const [fiadores, setFiadores] = useState([]);
 
   //para manejo de datepicker
   const [dateFecha, setDateFecha] = useState(new Date());
@@ -45,6 +46,19 @@ export function AddSolicitudScreen(props) {
         const result = await response.json();
         setData(result);
         //console.log(result);
+
+        const solicitantesArray = [];
+        for await (const solicitante of result.solicitantes) {
+          solicitantesArray.push({
+            value: solicitante.Id,
+            label: solicitante.Nombre,
+          });
+        }
+        
+        setSolicitantes(solicitantesArray);
+
+        //console.log(solicitantes);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -53,15 +67,9 @@ export function AddSolicitudScreen(props) {
     fetchData();
   }, []);
 
-  const handleSolicitanteChange = (value) => {
-    if (value != null) {
-      setSelectedSolicitante(value);
-      fetchDataFiador(value);
-    }
-  };
 
   const fetchDataFiador = async (value) => {
-    console.log(value);
+    //console.log(value);
     try {
       const url = `${API_HOST}/api-solicitud/getFiador/${value}`;
       const response = await fetch(url);
@@ -73,8 +81,20 @@ export function AddSolicitudScreen(props) {
       }
 
       const data = await response.json();
+
       setDataFiador(data);
-      console.log(data);
+
+      const fiadoresArray = [];
+      for await (const fiador of data) {
+        fiadoresArray.push({
+          value: fiador.Id,
+          label: fiador.Nombre,
+        });
+      }
+      
+      setFiadores(fiadoresArray);
+      
+     // console.log(fiadoresArray);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -85,9 +105,6 @@ export function AddSolicitudScreen(props) {
     // console.log(value);
   };
 
-  const handleFiadorChange = (value) => {
-    setSelectedFiador(value);
-  };
 
   const handSendData = async () => {
     // Validar que los campos obligatorios no sean nulos
@@ -174,7 +191,7 @@ export function AddSolicitudScreen(props) {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.label}>Fecha</Text>
+        <Text style={styles.label}>FECHA</Text>
         <View style={styles.inputDate}>
           <TouchableOpacity onPress={showMode}>
             <TextInput
@@ -196,48 +213,51 @@ export function AddSolicitudScreen(props) {
 
         <Text style={styles.label}>SOLICITANTE</Text>
         <View style={styles.formControl}>
-          {data && (
-            <RNPickerSelect
-              items={data.solicitantes.map((solicitante) => ({
-                label: solicitante.Nombre,
-                value: solicitante.Id,
-              }))}
-              onValueChange={handleSolicitanteChange}
-              value={selectedSolicitante}
-              placeholder={{
-                label: "Selecciona un solicitante",
-                value: null,
-              }}
-            />
+          {solicitantes && (
+           <Dropdown
+           style={dropStyles.dropdown}
+           placeholderStyle={styles.placeholderStyle}
+           selectedTextStyle={styles.selectedTextStyle}
+           inputSearchStyle={styles.inputSearchStyle}
+           iconStyle={styles.iconStyle}
+           data={solicitantes}
+           search
+           maxHeight={300}
+           labelField="label"
+           valueField="value"
+           placeholder="Seleccionar"
+           searchPlaceholder="Buscar..."
+           value={selectedSolicitante}
+           onChange={item => {
+            setSelectedSolicitante(item.value);
+            fetchDataFiador(item.value);
+           
+           }}
+         />
           )}
         </View>
 
         <Text style={styles.label}>FIADOR</Text>
         <View style={styles.formControl}>
-          {dataFiador && dataFiador.length > 0 ? (
-            <RNPickerSelect
-              items={dataFiador.map((fiador) => ({
-                label: fiador.Nombre,
-                value: fiador.Id,
-              }))}
-              onValueChange={handleFiadorChange}
-              value={selectedFiador}
-              placeholder={{
-                label: "Selecciona un fiador",
-                value: null,
-              }}
-            />
-          ) : (
-            <RNPickerSelect
-              items={[]} // Un array vacío ya que no hay datos
-              onValueChange={handleFiadorChange}
-              // value={selectedFiador}
-              placeholder={{
-                label: "No Aplica",
-                value: null,
-              }}
-              disabled // Deshabilita el picker si no hay datos
-            />
+          {fiadores && (
+           <Dropdown
+           style={dropStyles.dropdown}
+           placeholderStyle={styles.placeholderStyle}
+           selectedTextStyle={styles.selectedTextStyle}
+           inputSearchStyle={styles.inputSearchStyle}
+           iconStyle={styles.iconStyle}
+           data={fiadores}
+           search
+           maxHeight={300}
+           labelField="label"
+           valueField="value"
+           placeholder="Seleccionar"
+           searchPlaceholder="Buscar..."
+           value={selectedFiador}
+           onChange={item => {
+            setSelectedFiador(item.value);
+           }}
+         />
           )}
         </View>
 
