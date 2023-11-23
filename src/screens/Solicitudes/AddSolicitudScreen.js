@@ -1,4 +1,10 @@
-import {  View,  Text,  TouchableOpacity,  TextInput,  ScrollView,} from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,Button
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { styles } from "./AddSolicitudStyles";
 import { dropStyles } from "./AddSolicitudStyles";
@@ -8,14 +14,18 @@ import { Dropdown } from "react-native-element-dropdown";
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 
 export function AddSolicitudScreen(props) {
   const [data, setData] = useState(null);
   const [selectedSolicitante, setSelectedSolicitante] = useState(null);
   const [selectedFiador, setSelectedFiador] = useState(null);
   const [selectedTipo, setSelectedTipo] = useState(null);
- 
 
   const [solicitantes, setSolicitantes] = useState([]);
   const [fiadores, setFiadores] = useState([]);
@@ -54,11 +64,10 @@ export function AddSolicitudScreen(props) {
             label: solicitante.Nombre,
           });
         }
-        
+
         setSolicitantes(solicitantesArray);
 
         //console.log(solicitantes);
-
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -66,7 +75,6 @@ export function AddSolicitudScreen(props) {
 
     fetchData();
   }, []);
-
 
   const fetchDataFiador = async (value) => {
     //console.log(value);
@@ -82,8 +90,6 @@ export function AddSolicitudScreen(props) {
 
       const data = await response.json();
 
-      setDataFiador(data);
-
       const fiadoresArray = [];
       for await (const fiador of data) {
         fiadoresArray.push({
@@ -91,10 +97,10 @@ export function AddSolicitudScreen(props) {
           label: fiador.Nombre,
         });
       }
-      
+
       setFiadores(fiadoresArray);
-      
-     // console.log(fiadoresArray);
+
+      // console.log(fiadoresArray);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -105,23 +111,40 @@ export function AddSolicitudScreen(props) {
     // console.log(value);
   };
 
-
   const handSendData = async () => {
     // Validar que los campos obligatorios no sean nulos
     if (!selectedSolicitante || !selectedTipo || !selectedFiador) {
-      alert("Por favor, completa todos los campos obligatorios.");
+      //alert("Por favor, completa todos los campos obligatorios.");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Error",
+        textBody: "Por favor, completa todos los campos obligatorios.",
+        button: "Cerrar",
+      });
       return;
     }
 
+    
+
     // Validar que cantidad y meses no sean nulos y sean mayores a 0
     if (!cantidad || !meses || cantidad <= 0 || meses <= 0) {
-      alert("Cantidad y meses deben ser valores numéricos mayores a 0.");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Error",
+        textBody: "Cantidad y meses deben ser valores numéricos mayores a 0.",
+        button: "Cerrar",
+      });
       return;
     }
 
     // Validar que meses no sea un número decimal
     if (meses % 1 !== 0) {
-      alert("Meses no puede ser un número decimal.");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Error",
+        textBody: "Meses no puede ser un número decimal.",
+        button: "Cerrar",
+      });
       return;
     }
 
@@ -190,6 +213,7 @@ export function AddSolicitudScreen(props) {
 
   return (
     <ScrollView>
+     
       <View style={styles.container}>
         <Text style={styles.label}>FECHA</Text>
         <View style={styles.inputDate}>
@@ -214,50 +238,49 @@ export function AddSolicitudScreen(props) {
         <Text style={styles.label}>SOLICITANTE</Text>
         <View style={styles.formControl}>
           {solicitantes && (
-           <Dropdown
-           style={dropStyles.dropdown}
-           placeholderStyle={styles.placeholderStyle}
-           selectedTextStyle={styles.selectedTextStyle}
-           inputSearchStyle={styles.inputSearchStyle}
-           iconStyle={styles.iconStyle}
-           data={solicitantes}
-           search
-           maxHeight={300}
-           labelField="label"
-           valueField="value"
-           placeholder="Seleccionar"
-           searchPlaceholder="Buscar..."
-           value={selectedSolicitante}
-           onChange={item => {
-            setSelectedSolicitante(item.value);
-            fetchDataFiador(item.value);
-           
-           }}
-         />
+            <Dropdown
+              style={dropStyles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={solicitantes}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Seleccionar"
+              searchPlaceholder="Buscar..."
+              value={selectedSolicitante}
+              onChange={(item) => {
+                setSelectedSolicitante(item.value);
+                fetchDataFiador(item.value);
+              }}
+            />
           )}
         </View>
 
         <Text style={styles.label}>FIADOR</Text>
         <View style={styles.formControl}>
           {fiadores && (
-           <Dropdown
-           style={dropStyles.dropdown}
-           placeholderStyle={styles.placeholderStyle}
-           selectedTextStyle={styles.selectedTextStyle}
-           inputSearchStyle={styles.inputSearchStyle}
-           iconStyle={styles.iconStyle}
-           data={fiadores}
-           search
-           maxHeight={300}
-           labelField="label"
-           valueField="value"
-           placeholder="Seleccionar"
-           searchPlaceholder="Buscar..."
-           value={selectedFiador}
-           onChange={item => {
-            setSelectedFiador(item.value);
-           }}
-         />
+            <Dropdown
+              style={dropStyles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={fiadores}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Seleccionar"
+              searchPlaceholder="Buscar..."
+              value={selectedFiador}
+              onChange={(item) => {
+                setSelectedFiador(item.value);
+              }}
+            />
           )}
         </View>
 
@@ -310,8 +333,8 @@ export function AddSolicitudScreen(props) {
           <Text style={{ color: "white", fontSize: 18 }}>Enviar</Text>
         </TouchableOpacity>
       </View>
+      <AlertNotificationRoot>     
+    </AlertNotificationRoot>
     </ScrollView>
   );
 }
-
-
