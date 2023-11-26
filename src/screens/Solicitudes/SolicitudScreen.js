@@ -1,4 +1,12 @@
-import {  View,  Text,  ScrollView,  RefreshControl,  ActivityIndicator,  TouchableOpacity,} from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  ActivityIndicator,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { Card, SearchBar, FAB } from "react-native-elements";
 import { API_HOST } from "../../utils/constants";
@@ -10,6 +18,9 @@ export function SolicitudScreen(props) {
   const [noData, setNoData] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [idSolicitud, setIdSolicitud] = useState(null);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -51,8 +62,36 @@ export function SolicitudScreen(props) {
     navigation.navigate("Solicitudes", { screen: "AddSolicitud" });
   };
 
-  const goToEditSolicitud = (id) => {
+  const ShowModal = (id) => {
     console.log(id);
+    setIdSolicitud(id);
+    toggleModal();
+  };
+
+  const goToEditSolicitud = () => {
+    setModalVisible(!modalVisible);
+    let id = idSolicitud;
+    setIdSolicitud(null);
+    navigation.navigate("Solicitudes", {
+      screen: "EditSolicitud",
+      params: { id: id },
+    });
+
+  };
+
+  const goToRecibos = () => {
+    setModalVisible(!modalVisible);
+    let id = idSolicitud;
+    setIdSolicitud(null);
+    navigation.navigate("Solicitudes", {
+      screen: "Recibos",
+      params: { id: id },
+    });
+
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
   };
 
   return (
@@ -81,7 +120,7 @@ export function SolicitudScreen(props) {
           <Text style={styles.noDataText}>No se encontraron datos</Text>
         ) : (
           solicitudes.map((solicitud, index) => (
-            <TouchableOpacity onPress={() => goToEditSolicitud(solicitud.id)}>
+            <TouchableOpacity key={solicitud.id} onPress={() => ShowModal(solicitud.id)}>
               <Card
                 key={solicitud.id}
                 containerStyle={[
@@ -148,7 +187,69 @@ export function SolicitudScreen(props) {
         onPress={goToAddSolicitud}
         style={styles.fab}
       />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          // Puedes agregar lógica para cerrar la modal aquí
+          toggleModal();
+        }}
+      >
+        {/* Contenido de la modal */}
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {/* Aquí puedes colocar el contenido específico de tu modal */}
+            <Text h1 style={[styles.boldText, { textAlign: "center" }]}>
+              Opciones
+            </Text>
+            <TouchableOpacity
+               onPress={goToRecibos}
+              style={{
+                height: 50,
+                backgroundColor: "#475569",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 8,
+                marginTop: 20,
+              }}
+            >
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ color: "white", fontSize: 18, marginLeft: 10 }}>
+                  Ver recibos
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={goToEditSolicitud}
+              style={{
+                height: 50,
+                backgroundColor: "#475569",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 8,
+                marginTop: 20,
+              }}
+            >
+              <Text style={{ color: "white", fontSize: 18 }}>Modificar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={toggleModal}
+              style={{
+                height: 50,
+                backgroundColor: "#0F172A",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 8,
+                marginTop: 20,
+              }}
+            >
+              <Text style={{ color: "white", fontSize: 18 }}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
-

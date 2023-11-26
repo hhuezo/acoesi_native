@@ -2,11 +2,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SolicitudScreen } from "../screens/Solicitudes/SolicitudScreen";
 import { AddSolicitudScreen } from "../screens/Solicitudes/AddSolicitudScreen";
 import { EditSolicitudScreen } from "../screens/Solicitudes/EditSolicitudScreen";
+import { RecibosScreen } from "../screens/Solicitudes/RecibosScreen";
+
 const Stack = createNativeStackNavigator();
 
 import React from "react";
 
 export function SolicitudStack() {
+
+
+
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -24,7 +30,13 @@ export function SolicitudStack() {
       <Stack.Screen
         name="EditSolicitud"
         component={EditSolicitudScreen}
-        options={{ title: "Solicitud" }}
+        options={{ title: "Solicitud",}}
+      />
+
+<Stack.Screen
+        name="Recibos"
+        component={RecibosScreen}
+        options={{ title: "Recibos",}}
       />
     </Stack.Navigator>
   );

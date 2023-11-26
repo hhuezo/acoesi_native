@@ -3,7 +3,7 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  ScrollView,Button
+  ScrollView
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { styles } from "./AddSolicitudStyles";
@@ -22,7 +22,7 @@ import {
 } from "react-native-alert-notification";
 
 export function AddSolicitudScreen(props) {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(null);  
   const [selectedSolicitante, setSelectedSolicitante] = useState(null);
   const [selectedFiador, setSelectedFiador] = useState(null);
   const [selectedTipo, setSelectedTipo] = useState(null);
@@ -106,10 +106,6 @@ export function AddSolicitudScreen(props) {
     }
   };
 
-  const handleTipoChange = (value) => {
-    setSelectedTipo(value);
-    // console.log(value);
-  };
 
   const handSendData = async () => {
     // Validar que los campos obligatorios no sean nulos
@@ -148,7 +144,7 @@ export function AddSolicitudScreen(props) {
       return;
     }
 
-    const dateFecha = new Date("2023-11-21T04:57:09.375Z");
+    //const dateFecha = new Date("2023-11-21T04:57:09.375Z");
 
     const formattedDate = `${dateFecha.getFullYear()}-${padZero(
       dateFecha.getMonth() + 1
@@ -293,7 +289,9 @@ export function AddSolicitudScreen(props) {
                 label: tipo.Nombre,
                 value: tipo.Id,
               }))}
-              onValueChange={handleTipoChange}
+              onValueChange={(value) => {
+                setSelectedTipo(value);
+              }}
               value={selectedTipo}
               placeholder={{
                 label: "Selecciona un tipo",

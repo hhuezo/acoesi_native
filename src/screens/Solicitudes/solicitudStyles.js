@@ -68,5 +68,20 @@ export const styles = StyleSheet.create({
       right: 16,
       zIndex: 1, // Asegura que el botón esté por encima del ScrollView
     },
+
+    modalContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro translúcido
+    },
+    
+    modalContent: {
+      backgroundColor: "white",
+      padding: 20,
+      borderRadius: 10,
+      width: "80%", // Puedes ajustar el ancho de la modal según tus necesidades
+    },
+   
   });
   

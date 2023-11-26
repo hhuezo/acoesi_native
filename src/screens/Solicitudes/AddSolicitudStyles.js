@@ -52,6 +52,14 @@ export const styles = StyleSheet.create({
   formControlNumber: {
     marginBottom: 16,
   },
+   
+  fab: {
+    position: "absolute",
+    bottom: 55,
+    right: 16,
+    zIndex: 1, // Asegura que el botón esté por encima del ScrollView
+    borderWidth: 1, borderColor: '#ffffff',
+  },
 });
 
 export const dropStyles = StyleSheet.create({
