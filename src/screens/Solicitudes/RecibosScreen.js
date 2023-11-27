@@ -52,10 +52,9 @@ export function RecibosScreen(props) {
     }
   };
 
-
   const goToAddRecibo = async() => {
-    console.log(id)
-
+    const { navigation } = props;
+    navigation.navigate("Solicitudes", { screen: "AddRecibo", params: { id: id }, });
   }
 
   return (
