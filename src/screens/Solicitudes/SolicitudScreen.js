@@ -17,14 +17,13 @@ export function SolicitudScreen(props) {
   const [searchText, setSearchText] = useState("");
   const [noData, setNoData] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [idSolicitud, setIdSolicitud] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const fetchData = async () => {
     try {
-      setIsLoading(true);
+      setIsRefreshing(true);
       const url = `${API_HOST}/api-solicitud?search=${searchText}`;
       console.log(url);
       const response = await fetch(url);
@@ -37,12 +36,12 @@ export function SolicitudScreen(props) {
       setNoData(true);
     } finally {
       setIsRefreshing(false);
-      setIsLoading(false);
     }
   };
 
   const handleSearch = () => {
-    setIsLoading(true);
+    //setIsLoading(true);
+    setIsRefreshing(true);
     fetchData();
   };
 
@@ -96,12 +95,6 @@ export function SolicitudScreen(props) {
 
   return (
     <View style={styles.container}>
-      {/* Indicador de carga */}
-      {isLoading && (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0F172A" />
-        </View>
-      )}
       <SearchBar
         placeholder="Buscar..."
         onChangeText={(text) => setSearchText(text)}
